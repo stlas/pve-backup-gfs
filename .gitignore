@@ -1,0 +1,11 @@
+*.bak
+*~
+.DS_Store
+/debian/*.log
+/debian/*.substvars
+/debian/*.debhelper
+/debian/files
+/debian/proxmox-backup-gfs/
+/debian/.debhelper/
+/debian/debhelper-build-stamp
+*.deb

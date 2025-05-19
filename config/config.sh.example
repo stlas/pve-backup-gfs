@@ -1,0 +1,70 @@
+#!/bin/bash
+#
+# Proxmox GFS Backup Configuration
+# Copyright (c) 2024 Stefan Laszczyk
+#
+
+# Backup Settings
+BACKUP_DIR="/var/lib/vz/dump"
+BACKUP_MODE="snapshot"  # snapshot or suspend
+BACKUP_COMPRESS="zstd"  # zstd, gz, or lzo
+BACKUP_LEVEL="1"       # Compression level (1-9, or 1-19 for zstd)
+
+# Retention Settings
+DAILY_RETENTION=7      # Days to keep daily backups
+WEEKLY_RETENTION=4     # Weeks to keep weekly backups
+MONTHLY_RETENTION=6    # Months to keep monthly backups
+
+# Mail Settings
+SMTP_SERVER="mail.example.com"
+SMTP_PORT="587"
+SMTP_USER="backup@example.com"
+SMTP_PASS=""
+NOTIFICATION_EMAIL="admin@example.com"
+
+# Advanced Settings
+LOG_LEVEL="INFO"       # DEBUG, INFO, WARN, ERROR
+DRY_RUN="1"           # 1 for simulation mode
+PARALLEL_JOBS="2"      # Number of parallel backups
+
+# Validation function
+validate_config() {
+    local errors=0
+    
+    # Required variables check
+    local required=(
+        "BACKUP_DIR"
+        "SMTP_SERVER"
+        "SMTP_USER"
+        "SMTP_PASS"
+        "NOTIFICATION_EMAIL"
+    )
+    
+    # Value validation
+    [[ ! $BACKUP_COMPRESS =~ ^(zstd|gz|lzo)$ ]] && 
+        echo "Error: Invalid BACKUP_COMPRESS value" && ((errors++))
+    
+    [[ ! $BACKUP_LEVEL =~ ^([1-9]|1[0-9])$ ]] && 
+        echo "Error: Invalid BACKUP_LEVEL value" && ((errors++))
+    
+    [[ ! $LOG_LEVEL =~ ^(DEBUG|INFO|WARN|ERROR)$ ]] && 
+        echo "Error: Invalid LOG_LEVEL value" && ((errors++))
+    
+    # Directory check
+    if [[ ! -d "$BACKUP_DIR" ]]; then
+        echo "Error: BACKUP_DIR does not exist"
+        ((errors++))
+    fi
+    
+    # Return error count
+    return $errors
+}
+
+# Export all variables
+export ${!BACKUP_*} ${!SMTP_*} ${!LOG_*}
+
+# Validate configuration
+validate_config || {
+    echo "Configuration validation failed"
+    exit 1
+}

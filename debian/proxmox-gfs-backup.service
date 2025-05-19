@@ -1,0 +1,12 @@
+[Unit]
+Description=Proxmox GFS Backup Service
+After=pve-cluster.service
+
+[Service]
+ExecStart=/usr/sbin/proxmox-gfs-backup
+Type=simple
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
