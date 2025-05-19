@@ -11,3 +11,7 @@
 *.deb
 .vscode/
 test.log
+*.swp
+build/
+dist/
+node_modules/
