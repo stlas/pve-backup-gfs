@@ -9,3 +9,5 @@
 /debian/.debhelper/
 /debian/debhelper-build-stamp
 *.deb
+.vscode/
+test.log
